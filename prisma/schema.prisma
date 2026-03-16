@@ -4,10 +4,111 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Product {
+  id            Int             @id @default(autoincrement())
+  name          String
+  description   String?
+  category      ProductCategory
+  price         Decimal
+  currency      String          @default("RUB")
+  discountPrice Decimal?        @map("discount_price")
+  inStock       Boolean         @default(true) @map("in_stock")
+  gender        Gender?
+  ageGroup      AgeGroup?       @map("age_group")
+  season        String
+  sizes         String[]
+  colors        String[]
+  material      String?
+  images        String[]
+  stockQuantity Int             @default(0) @map("stock_quantity")
+  tags          String[]
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @default(now()) @map("updated_at")
+  orderItems    OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  telegramId    Int           @map("telegram_id")
+  totalAmount   Decimal       @map("total_amount")
+  currency      String        @default("RUB")
+  status        OrderStatus   @default(CREATED)
+  customerName  String?       @map("customer_name")
+  phone         String?
+  email         String?
+  paymentStatus PaymentStatus
+  cancelReason  String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @map("updated_at")
+  orderItems    OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+  unitPrice Decimal @db.Decimal(10, 2) // цена на момент заказа
+  size      String? @db.VarChar(10)
+  color     String? @db.VarChar(50)
+  subtotal  Decimal @db.Decimal(10, 2) // quantity * unitPrice
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+enum ProductCategory {
+  Footwear
+  Outwear
+  Top
+  Bottom
+
+  @@map("product_category")
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+
+  @@map("order_status")
+}
+
+enum AgeGroup {
+  ADULT
+  CHILD
+
+  @@map("age_group")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+
+  @@map("payment_status")
 }

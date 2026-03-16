@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+    loryshop-db:
+        image: postgres:17
+        container_name: "loryshop-db"
+        hostname: "loryshop-db"
+        restart: unless-stopped
+        ports:
+            - "51112:5432"
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: shop
