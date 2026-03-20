@@ -22,7 +22,7 @@ model Product {
   inStock       Boolean         @default(true) @map("in_stock")
   gender        Gender?
   ageGroup      AgeGroup?       @map("age_group")
-  season        String
+  season        String?
   sizes         String[]
   colors        String[]
   material      String?
@@ -38,7 +38,7 @@ model Product {
 
 model Order {
   id            Int           @id @default(autoincrement())
-  telegramId    Int           @map("telegram_id")
+  telegramId    Int           @unique @map("telegram_id")
   totalAmount   Decimal       @map("total_amount")
   currency      String        @default("RUB")
   status        OrderStatus   @default(CREATED)

@@ -11,11 +11,11 @@ export class ProductRepository {
   }
 
   async findAll() {
-    return await this.databaseService.product.findMany();
+    return await this.databaseService.client.product.findMany();
   }
 
   async findOne(id: number) {
-    return await this.databaseService.product.findFirst({
+    return await this.databaseService.client.product.findFirst({
       where: {
         id,
       },
@@ -27,7 +27,7 @@ export class ProductRepository {
   }
 
   async remove(id: number) {
-    return await this.databaseService.product.delete({
+    return await this.databaseService.client.product.delete({
       where: {
         id,
       },
